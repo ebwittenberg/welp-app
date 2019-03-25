@@ -1,0 +1,7 @@
+-- Example queries
+-- User Profile
+-- Favorited restaurants: Search for specific user ID in favorites, find all matches. That then gets passed to restaurants to get the restaurant names
+-- Reviewed restaurants: Pass user ID through reviews table, output content, score, and also get restaurant name from restaurants table
+-- Restaurant Profile
+-- Total reviews: Take restaurant ID, pass through to reviews table, return count of that restaurant ID
+-- Average review: Take restaurant ID, pass through to reviews table, take sum of scores, divide by number of reviews
