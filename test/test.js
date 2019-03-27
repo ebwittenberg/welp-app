@@ -7,9 +7,10 @@ chai.use(chaiAsPromised).should();
 const User = require('../models/users');
 const Restaurant = require('../models/restaurants');
 const Reviews = require('../models/reviews');
+const ReviewsInClass = require('../models/reviews-inclass');
 
 // add describe block for users
-describe('Users model', () => {
+describe('User model', () => {
     // happy path
     it('should be able to retrieve by id', async () => {
         const theUser = await User.getById(3);
@@ -37,10 +38,36 @@ describe('Users model', () => {
             })
         // re-grab the user, expect the email to be equal to the new value
     });
+    it('should encrypt the password', async () => {
+        // get a user with id 1
+        const theUser = await User.getById(1);
+        // set their password field to "bacon", and encrypte it
+        theUser.setPassword("bacon");
+        // compare their password to "bacon"
+        expect(theUser.password).not.to.equal("bacon");
+        // it should be false
+    })
+
+    it('should be able to check for correct passwords', async () => {
+        // get a user with id 1
+        const theUser = await User.getById(1);
+        // set their password field to "bacon", and encrypte it
+        theUser.setPassword("bacon");
+        // save them to the database
+        await theUser.save();
+        // get them back out of the database
+        const theUpdatedUser = await User.getById(1);
+        // ask them if their password is "bacon"
+        const isCorrectPassword = theUpdatedUser.checkPassword("bacon");
+        expect(isCorrectPassword).to.be.true;
+
+        const isNotCorrectPassword = theUpdatedUser.checkPassword("tofu");
+        expect(isNotCorrectPassword).to.be.false;
+    })
 })
 
 // add a describe block for restaurants
-describe('Restaurants model', () => {
+describe('Restaurant model', () => {
     it('should be able to grab an array of restaurants', async () => {
         const restaurantArray = await Restaurant.getAll();
         // console.log(restaurantArray);
@@ -84,7 +111,7 @@ describe('Restaurants model', () => {
 });
 
 // adds describe block for reviews
-describe('Reviews model', () => {
+describe('Review model', () => {
     it('should show all reviews and review details for specific restaurant', async () => {
         // gets all reviews by restaurant ID
         const reviews = await Reviews.getByRestaurantId(3);
@@ -104,3 +131,41 @@ describe('Reviews model', () => {
     // 
 });
 
+describe('Review model - in class', () => {
+    // Can I get one review?
+    it('should be able to retrieve a review by ID', async () => {
+        // dream 
+        const theReview = await ReviewsInClass.getById(4);
+        expect(theReview).to.be.instanceOf(ReviewsInClass);
+    });
+    // Can I get all reviews?
+    it('should be able to retrieve all reviews', async () => {
+        const aBunchOfReviews = await ReviewsInClass.getAll();
+        expect(aBunchOfReviews).to.be.instanceOf(Array);
+        // and make sure each of them is an array
+        for (let i = 0; i < aBunchOfReviews.length; i++) {
+            // exception won't get swalled by a regular for loop, but might by the forEach
+            expect(aBunchOfReviews[i]).to.be.instanceOf(ReviewsInClass);
+        }
+
+    });
+});
+
+describe('Users and Reviews', function() {
+    it('A user instance should be able to retrieve all their reviews', async function() {
+        // dream code
+        // grab user by ID
+        const theUser = await User.getById(5);
+        // then get all their reviews
+        const theReviews = await theUser.getReviews();
+        // confirm that their reviews are in an array
+        expect(theReviews).to.be.instanceOf(Array);
+        // and that the array is the correct length
+        expect(theReviews).to.have.lengthOf(2);
+        // and that each one is an instance of Review
+        for (let i=0; i < theReviews.length; i++) {
+            expect(theReviews[i]).to.be.instanceOf(ReviewsInClass);
+        }
+
+    })
+})

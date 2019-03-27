@@ -1,5 +1,7 @@
 // bring in database connection
-const db = require('./conn')
+const db = require('./conn');
+const bcrypt = require('bcryptjs');
+const ReviewsInClass = require('./reviews-inclass');
 // create User class
 
 // function User(_first_name, _last_name, email, password) {
@@ -51,6 +53,41 @@ class User {
         password = '${this.password}'
         where id=${this.id}
         `)
+    }
+
+    setPassword(newPassword) {
+        const salt = bcrypt.genSaltSync(10);
+        const hash = bcrypt.hashSync(newPassword, salt);
+        this.password = hash;
+
+    }
+
+    checkPassword(enteredPassword) {
+        // this.password is where the hash is stored
+        const isCorrect = bcrypt.compareSync(enteredPassword, this.password);
+        return isCorrect;
+
+    }
+
+
+
+    // instance of User should be able to get their reviews
+    getReviews() {
+        // uses the user ID of the User instance that is calling this
+        return db.any(`
+        select * from reviews
+        WHERE user_id=${this.id}   
+        `).then(function(arrayOfReviews) {
+            const arrayOfReviewInstances = [];
+            arrayOfReviews.forEach(reviewData => {
+                const newInstance = new ReviewsInClass(reviewData.id, reviewData.score, reviewData.content, reviewData.restaurant_id, reviewData.user_id);
+
+                arrayOfReviewInstances.push(newInstance);
+            })
+
+            return arrayOfReviewInstances;
+
+        })
     }
 
 }
