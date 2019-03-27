@@ -8,6 +8,7 @@ const User = require('../models/users');
 const Restaurant = require('../models/restaurants');
 const Reviews = require('../models/reviews');
 
+// add describe block for users
 describe('Users model', () => {
     // happy path
     it('should be able to retrieve by id', async () => {
@@ -29,7 +30,7 @@ describe('Users model', () => {
         // update the email
         // save the user (won't work yet)
         theUser.save()
-            .then(async report => {
+            .then(async () => {
                 // console.log(report);
                 const theUpdatedUser = await User.getById(2);
                 expect(theUpdatedUser.email).to.equal('newemail@new.com');
@@ -80,8 +81,6 @@ describe('Restaurants model', () => {
 
 
     })
-
-
 });
 
 // adds describe block for reviews
@@ -100,5 +99,8 @@ describe('Reviews model', () => {
         expect(reviews).to.be.a('number');
 
     })
-})
+
+    // shows 10 most recent reviews for any restaurants
+    // 
+});
 

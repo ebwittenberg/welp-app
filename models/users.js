@@ -17,6 +17,7 @@ const db = require('./conn')
 
 class User {
 
+    // define constructor (this is what all instances will need during creation)
     constructor(id, first_name, last_name, email, password) {
         this.id = id;
         this.firstName = first_name;
@@ -53,17 +54,6 @@ class User {
     }
 
 }
-
-// User.getById(3)
-//     .then((user) => {
-//         console.log()
-//     })
-
-// User.getById(2).then(function(userData) {
-//     console.log(userData);
-// })
-
-
 
 
 module.exports = User;
