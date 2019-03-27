@@ -8,7 +8,8 @@
     "db:init": "psql -f schema.sql restaurants-app && psql -f seed.sql restaurants-app",
     "db:destroy": "dropdb restaurants-app",
     "db:reset": "npm run db:destroy; npm run db:create && npm run db:init",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha",
+    "test:watch": "mocha -w"
   },
   "repository": {
     "type": "git",
@@ -23,5 +24,10 @@
   "homepage": "https://github.com/ebwittenberg/welp-app#readme",
   "dependencies": {
     "pg-promise": "^8.6.4"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "mocha": "^6.0.2"
   }
 }
