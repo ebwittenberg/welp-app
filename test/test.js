@@ -8,6 +8,7 @@ const User = require('../models/users');
 const Restaurant = require('../models/restaurants');
 const Reviews = require('../models/reviews');
 const ReviewsInClass = require('../models/reviews-inclass');
+const Favorite = require('../models/favorites');
 
 // add describe block for users
 describe('User model', () => {
@@ -168,4 +169,61 @@ describe('Users and Reviews', function() {
         }
 
     })
+})
+
+describe('Favorite model', () => {
+    it('should get all favorites given a user id', async () => {
+
+        const userFavorites = await Favorite.getByUserId(3);
+        expect(userFavorites).to.be.instanceOf(Array);
+
+        userFavorites.forEach(favorite => {
+            expect(favorite).to.be.instanceOf(Favorite);
+        })
+
+    })
+})
+
+describe('Users and Favorites', () => {
+    it('should allow user to get all their favorites given their id', async () => {
+        // create new instance of User by id
+        const theUser = await User.getById(3);
+        // use instance of User to get that particular user's favorites
+        const userFavorites = await theUser.getFavorites();
+        expect(userFavorites).to.be.instanceOf(Array);
+        userFavorites.forEach(favorite => {
+            expect(favorite).to.be.instanceOf(Favorite);
+        })
+    })
+
+    it('should allow user to set particular restaurant as a favorite', async () => {
+        // create new instance of User by id
+        const theUser = await User.getById(3);
+        const userFavorites = await theUser.getFavorites();
+        // store number of current favorites in a variable
+        const currentNumberOfFavorites = userFavorites.length;
+        // instance of User should be able to create a new favorite restaurant based on restaurant id (4 is rest id)
+        await theUser.setFavorite(4);
+
+        const updatedUserFavorites = await theUser.getFavorites();
+        // check if number of favorites is different from old number of favorites
+        expect(updatedUserFavorites.length).not.to.equal(currentNumberOfFavorites);
+
+    });
+    it('should allow user to unset a particular restaurant as a favorite', async () => {
+        const theUser = await User.getById(3);
+
+        const userFavorites = await theUser.getFavorites();
+        const currentNumOfFavs = userFavorites.length;
+
+        await theUser.deleteFavorite(4);
+
+        const updatedUserFavs = await theUser.getFavorites();
+
+        expect(updatedUserFavs.length).not.to.equal(currentNumOfFavs);
+
+
+    })
+
+
 })
